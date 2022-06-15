@@ -68,13 +68,16 @@ def main(ARGS):
 
     # Analyze and plot predictions
     pred_df = pd.read_csv(meta["test_df_file"])
+    MAEs = []
     for i, item in enumerate(meta["target_names"], start=1):
         pred_df[f"pred_{i}"] = pred[:, i-1]
         pred_df[f"target_{i}"] = pred_df[item]
         pred_df[f"error_{i}"] = abs(pred_df[f"pred_{i}"] - pred_df[f"target_{i}"])
+        MAEs.append(pred_df[f"error_{i}"].mean())
     pred_df.to_csv(os.path.join(test_results_abs_dir, "predictions.csv"))
     fig = plot_pred(ARGS.data_dir, pred_df, **meta)
     fig.savefig(os.path.join(test_results_abs_dir, "errors.png"), bbox_inches='tight')
+    return MAEs
 
 if __name__ == '__main__':
     # get command line arguments
@@ -85,4 +88,5 @@ if __name__ == '__main__':
     parser.add_argument("--model_type", default='model_surface2d', type=str, help='model type - edge or surface')
     ARGS = parser.parse_args()
     print('Running test train split with Arguments:\n', ARGS)
-    main(ARGS)
+    MAEs = main(ARGS)
+    print('MAEs: ', MAEs)
