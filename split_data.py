@@ -15,7 +15,7 @@ def make_split(ARGS):
     # Create new dataset
     for set in ["train", "test"]:
         set_folder = os.path.join(data_folder, set)
-        os.makedirs(set_folder)
+        os.makedirs(set_folder, exist_ok=True)
 
         # Load meta data and targets
         with open(meta_filepath, 'r') as f:
