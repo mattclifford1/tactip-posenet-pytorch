@@ -4,7 +4,8 @@ pytorch data loader to read images and csv
 import pandas as pd
 import os
 import numpy as np
-from skimage import io
+from skimage import io, transform, color
+from torchvision import transforms
 import torch
 import random
 
@@ -66,6 +67,54 @@ def ToTensor(sample):
     return sample
 
 
+'''
+Classes that transform the image data
+Designed to be used in a modular fashion
+'''
+class rescale(object):
+    """Rescale the image in a sample to a given size.
+    Args:
+        output_size (tuple): Desired output size. Output is
+            matched to output_size.
+    """
+    def __init__(self, output_size):
+        assert isinstance(output_size, tuple)
+        self.output_size = output_size
+        new_h, new_w = self.output_size
+        self.new_h, self.new_w = int(new_h), int(new_w)
+
+    def __call__(self, sample):
+        for key in sample.keys():
+            sample[key] = transform.resize(sample[key], (self.new_h, self.new_w))
+        return sample
+
+class grey_scale(object):
+    """Rescale the image in a sample to a given size.
+    Args:
+        output_size (tuple): Desired output size. Output is
+            matched to output_size.
+    """
+    def __init__(self, normalise=True):
+        self.normalise = normalise
+
+    def make_grey(self, image):
+        if self.normalise:
+            image = image/255.
+        if len(image.shape) == 2:
+            image = np.expand_dims(image, axis=2)
+            print(image.shape)
+        elif image.shape[2] == 1:
+            return image
+        else:
+            image = color.rgb2gray(image)
+        return image
+
+    def __call__(self, sample):
+        for key in sample.keys():
+            sample[key] = self.make_grey(sample[key])
+        return sample
+
+
 if __name__ == '__main__':
     # plot a few of the training examples
     import matplotlib.pyplot as plt
@@ -76,14 +125,19 @@ if __name__ == '__main__':
     parser.add_argument("--image_dir", default=os.path.join(home_dir, 'summer-project/nathans-repos/data/dev-data/tactip-127/model_surface2d/frames_bw'), type=str, help='folder where images are located')
     ARGS = parser.parse_args()
 
-    training_data = get_data(ARGS.csv, ARGS.image_dir)
+    # composed = transforms.Compose([Rescale((256,256)),
+    #                                RandomCrop(224)])
+    training_data = get_data(ARGS.csv,
+                             ARGS.image_dir,
+                             transform=grey_scale())
     fig = plt.figure()
 
     for i in range(len(training_data)):
         sample = training_data[i]
         plt.imshow(sample['image'])
+        print(sample['image'].max())
         print(sample['label'])
         print(sample['label_names'])
         plt.show()
-        if i == 1:
+        if i == 0:
             break
