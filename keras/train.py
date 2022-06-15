@@ -2,6 +2,10 @@
 code adapted from nathan lepora's tactip jupyter notebook
 '''
 import os, json, pandas as pd, matplotlib.pyplot as plt
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+import logging
+logging.getLogger("tensorflow").setLevel(logging.ERROR)
+logging.getLogger("tensorflow").addHandler(logging.NullHandler(logging.ERROR))
 from pose_models_2d.lib.models.cnn_model import CNNmodel
 from argparse import ArgumentParser
 
