@@ -1,3 +1,6 @@
+'''
+code adapted from nathan lepora's tactip jupyter notebook
+'''
 import os, json, pandas as pd, matplotlib.pyplot as plt
 from pose_models_2d.lib.models.cnn_model import CNNmodel
 from argparse import ArgumentParser
