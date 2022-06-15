@@ -6,7 +6,7 @@ from pose_models_2d.lib.models.cnn_model import CNNmodel
 from argparse import ArgumentParser
 
 
-def plot_pred(pred_df, target_names, model_file, meta_file, poses_rng, **kwargs):
+def plot_pred(data_path, pred_df, target_names, model_file, meta_file, poses_rng, **kwargs):
     plt.rcParams.update({'font.size': 18})
     n = len(target_names)
 
@@ -73,7 +73,7 @@ def main(ARGS):
         pred_df[f"target_{i}"] = pred_df[item]
         pred_df[f"error_{i}"] = abs(pred_df[f"pred_{i}"] - pred_df[f"target_{i}"])
     pred_df.to_csv(os.path.join(test_results_abs_dir, "predictions.csv"))
-    fig = plot_pred(pred_df, **meta)
+    fig = plot_pred(ARGS.data_dir, pred_df, **meta)
     fig.savefig(os.path.join(test_results_abs_dir, "errors.png"), bbox_inches='tight')
 
 if __name__ == '__main__':
