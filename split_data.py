@@ -1,4 +1,7 @@
 '''
+Author: Matt Clifford
+Email: matt.clifford@bristol.ac.uk
+
 code adapted from nathan lepora's tactip jupyter notebook
 '''
 import os, json, pandas as pd, numpy as np
@@ -45,9 +48,8 @@ def make_split(ARGS):
 
 if __name__ == '__main__':
     # get command line arguments
-    home_dir = os.path.expanduser('~')
     parser = ArgumentParser(description='data dir and model type')
-    parser.add_argument("--data_dir", default=os.path.join(home_dir, 'summer-project/nathans-repos/data/dev-data'), type=str, help='data base dir')
+    parser.add_argument("--data_dir", default='dev-data', type=str, help='data base dir')
     parser.add_argument("--sensor_type", default='tactip-127', type=str, help='tactip sensor model type - eg. tactip-127')
     parser.add_argument("--model_type", default='model_surface2d', type=str, help='model type - edge or surface')
     parser.add_argument("--split", default=0.75, type=float, help='train test split proportion')

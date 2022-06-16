@@ -1,3 +1,14 @@
+# models
+model.h5
+*.h5
+history.csv
+errors.png
+test2d_cnn
+train2d_cnn
+
+
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
