@@ -47,7 +47,7 @@ class get_data:
         # data transforms
         if self.transform:
             sample = self.transform(sample)
-        # sample = ToTensor(sample)
+        sample = ToTensor(sample)
         # get labels to sample
         sample['label'] = []
         sample['label_names'] = []
@@ -102,7 +102,6 @@ class grey_scale(object):
             image = image/255.
         if len(image.shape) == 2:
             image = np.expand_dims(image, axis=2)
-            print(image.shape)
         elif image.shape[2] == 1:
             return image
         else:
@@ -130,14 +129,17 @@ if __name__ == '__main__':
     training_data = get_data(ARGS.csv,
                              ARGS.image_dir,
                              transform=grey_scale())
+    # loop over the data set handler to check it's working correctly
     fig = plt.figure()
-
     for i in range(len(training_data)):
         sample = training_data[i]
-        plt.imshow(sample['image'])
-        print(sample['image'].max())
-        print(sample['label'])
-        print(sample['label_names'])
+        im_numpy = sample['image'].cpu().detach().numpy()
+        im_numpy = np.swapaxes(im_numpy,0,1)
+        im_numpy = np.swapaxes(im_numpy,1,2)
+        plt.imshow(im_numpy)
+        print('Max im value: ', sample['image'].max())
+        print('Labels: ', sample['label'])
+        print('Label names: ', sample['label_names'])
         plt.show()
         if i == 0:
             break
