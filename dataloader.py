@@ -47,22 +47,26 @@ class get_data:
         # data transforms
         if self.transform:
             sample = self.transform(sample)
-        sample = ToTensor(sample)
+        sample = numpy_image_torch_tensor(sample)
         # get labels to sample
         sample['label'] = []
         sample['label_names'] = []
         for label in self.labels.keys():
             sample['label'].append(self.labels[label][i])
             sample['label_names'].append(label)
+        sample['label'] = torch.tensor(sample['label'])
         return sample
 
 
-def ToTensor(sample):
+def numpy_image_torch_tensor(sample):
     """Convert ndarrays in sample to Tensors."""
     # swap color axis because
     # numpy image: H x W x C
     # torch image: C x H x W
     for key in sample.keys():
+        # add chanel dim to 2D arrays
+        if len(sample[key].shape) == 2:
+            sample[key] = np.expand_dims(sample[key], axis=2)
         sample[key] = torch.from_numpy(sample[key].transpose((2, 0, 1)))
     return sample
 
