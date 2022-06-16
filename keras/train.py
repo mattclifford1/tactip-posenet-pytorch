@@ -95,7 +95,7 @@ if __name__ == '__main__':
     parser = ArgumentParser(description='data dir and model type')
     parser.add_argument("--data_dir", default='dev-data', type=str, help='data base dir')
     parser.add_argument("--sensor_type", default='tactip-127', type=str, help='tactip sensor model type - eg. tactip-127')
-    parser.add_argument("--model_type", default='model_surface2d', type=str, help='model type - edge or surface')
+    parser.add_argument("--model_type", default='model_surface2d', type=str, help='model type - model_edge2d or model_surface2d')
     parser.add_argument("--epochs", default=2, type=int, help='how many epochs to train for')
     ARGS = parser.parse_args()
     print('Running test train split with Arguments:\n', ARGS)
