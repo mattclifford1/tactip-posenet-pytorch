@@ -120,8 +120,8 @@ if __name__ == '__main__':
     from argparse import ArgumentParser
     home_dir = os.path.expanduser('~')
     parser = ArgumentParser(description='data dir and model type')
-    parser.add_argument("--csv", default=os.path.join(home_dir, 'summer-project/nathans-repos/data/dev-data/tactip-127/model_surface2d/targets.csv'), type=str, help='targets.csv file')
-    parser.add_argument("--image_dir", default=os.path.join(home_dir, 'summer-project/nathans-repos/data/dev-data/tactip-127/model_surface2d/frames_bw'), type=str, help='folder where images are located')
+    parser.add_argument("--csv", default='dev-data/tactip-127/model_surface2d/targets.csv', type=str, help='targets.csv file')
+    parser.add_argument("--image_dir", default='dev-data/tactip-127/model_surface2d/frames_bw', type=str, help='folder where images are located')
     ARGS = parser.parse_args()
 
     # composed = transforms.Compose([Rescale((256,256)),
