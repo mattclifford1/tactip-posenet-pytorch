@@ -14,7 +14,7 @@ import errno
 class network(nn.Module):
     def __init__(self, input_size):
         super(network, self).__init__()
-        self.input_size = (1, input_size, input_size)
+        self.input_size = (1, input_size[0], input_size[1])
 
         self.conv_size = 256
         self.kernel_size = 3
@@ -148,7 +148,7 @@ def load_weights(model, weights_path):
 if __name__ == '__main__':
     # check network works (dev mode)
     x = torch.zeros(1,1,128,128)
-    net = network(128)
-    out = net.forward(x)
+    net = network((128, 128))
+    out = net(x)
     print('in shape: ', x.shape)
     print('out shape: ', out.shape)
