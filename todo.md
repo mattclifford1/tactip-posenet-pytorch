@@ -5,12 +5,10 @@ dataloader
 - tests for pytorch dataloader
 
 network
-- define network
-- invariant to input size
+- flexible to let user define different conv channel sizes
 
 trainer
-- trainer pytests
-- optimiser
+- optimiser regulariser
 
 validation
 - give dataset and loop over to get MAE
