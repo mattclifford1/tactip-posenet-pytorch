@@ -141,7 +141,7 @@ def load_weights(model, weights_path):
 
 
 if __name__ == '__main__':
-    # check network works (dev)
+    # check network works (dev mode)
     x = torch.zeros(1,1,128,128)
     net = network()
     out = net.forward(x)
