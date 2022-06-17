@@ -15,11 +15,6 @@ import networks.tacnet as t_net
 
 
 class test_tacnet(unittest.TestCase):
-    # def setUp(self):
-    #     self.csv = join(base_dir, 'dev-data/tactip-127/model_surface2d/targets.csv')
-    #     self.image_dir = join(base_dir, 'dev-data/tactip-127/model_surface2d/frames_bw')
-    #     self.dataloader = dataloader.get_data(self.csv, self.image_dir)
-
     def test_can_start(self):
         self.make_and_run_square_net(128)
         self.make_and_run_square_net(256)
