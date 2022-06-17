@@ -69,7 +69,7 @@ class network(nn.Module):
         todo: split into forward convs and fc to be able to deterimine
               the dims after conv layer
               '''
-        # x = self.check_input_size(x)
+        x = self.check_input_size(x)
         x = self.forward_conv_layers(x)
         x = x.reshape(x.shape[0], -1)
         for layer in range(len(self.fc_layer_nums)):
@@ -87,7 +87,7 @@ class network(nn.Module):
             H = self.input_size[1]
             W = self.input_size[2]
         if x.shape[2] != H and x.shape[3] != W:
-            x = transforms.resize(x, (H, W))
+            x = transforms.Resize((H, W))(x)
         return x
 
 
