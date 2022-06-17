@@ -13,40 +13,48 @@ class network(nn.Module):
         self.conv_size = 256
         self.kernel_size = 3
         self.num_conv_layers = 5
-        self.contruct_net()
+        self.fc_layer_nums = [64, 2]
+        self.contruct_layers()
 
-    def contruct_net(self):
+    def contruct_layers(self):
+        # CONVOLUTIONS
         self.conv_layers = {}
         dim = 1 # input is grey scale
         for layer in range(self.num_conv_layers):
-            conv_layer = nn.Sequential(
-                nn.Conv2d(dim, self.conv_size, self.kernel_size),
-                nn.PReLU(),
-                nn.MaxPool2d(2, stride=2),
-                # nn.Dropout(0.3)
-                )
+            conv_layer = ConvBlock(dim, self.conv_size,
+                                   kernel_size=self.kernel_size,
+                                   # activation=nn.PReLU
+                                   )
             self.conv_layers['conv_'+str(layer)] = conv_layer
             dim = self.conv_size
 
+        # FULLY CONNECTED
+        self.fc_layers = {}
+        prev_num = self.get_out_conv_shape()
+        for layer in range(len(self.fc_layer_nums)):
+            fc_layer = FullyConnectedLayer(prev_num, self.fc_layer_nums[layer])
+            self.fc_layers['fc_'+str(layer)] = fc_layer
+            prev_num = self.fc_layer_nums[layer]
 
 
-        self.fc = nn.Sequential(
-            nn.Linear(self.final_conv_dims, self.emb_dim*2),
-            # nn.Linear(64*self.conv_final_dim*self.conv_final_dim, self.emb_dim*2),
-            nn.PReLU(),
-            nn.Linear(self.emb_dim*2, self.emb_dim)
-        )
+    def get_out_conv_shape(self):
+        '''need to impliment
+        pass a dummy input of the correct size and determine size after all the convs
+        '''
+        num_dims = 1024
+        return num_dims
 
     def forward(self, x):
+        '''
+        todo: split into forward convs and fc to be able to deterimine
+              the dims after conv layer
+              '''
         x = self.check_input_size(x)
-        x = self.conv1(x)
-        x = self.conv2(x)
-        x = self.conv3(x)
-        x = self.conv4(x)
-        # print(x.shape)
-        x = x.view(-1, self.final_conv_dims)
-        x = self.fc(x)
-        # x = nn.functional.normalize(x)
+        for layer in range(self.num_conv_layers):
+            x = self.conv_layers['conv_'+str(layer)](x)
+        x = x.reshape(x.shape[0], -1)
+        for layer in range(len(self.fc_layer_nums)):
+            x = self.fc_layers['fc_'+str(layer)](x)
         return x
 
     def check_input_size(self, x):
@@ -57,8 +65,54 @@ class network(nn.Module):
             H = self.input_size[0]
             W = self.input_size[1]
         if x.shape[2] != H and x.shape[3] != W:
-            x = transforms.resuze(x, (H, W))
+            x = transforms.resize(x, (H, W))
         return x
+
+class ConvBlock(nn.Module):
+    def __init__(self, in_channels, out_channels,
+                 kernel_size,
+                 batch_norm=False,
+                 activation=nn.ReLU,
+                 dropout=0,  # zero is equivelant to identity (no dropout)
+                 **kwargs):
+        super(ConvBlock, self).__init__()
+        self.batch_norm = batch_norm
+        self.conv = nn.Conv2d(in_channels, out_channels, kernel_size, **kwargs)
+        self.max_pool = nn.MaxPool2d(2, stride=2)
+        self.bn = nn.BatchNorm2d(out_channels)
+        self.activation = activation()
+        self.dropout = nn.Dropout(dropout)
+
+    def forward(self, x):
+        x = self.conv(x)
+        x = self.activation(x)
+        x = self.max_pool(x)
+        x = self.dropout(x)
+        if self.batch_norm:
+            x = self.bn(x)
+        return x
+
+class FullyConnectedLayer(nn.Module):
+    def __init__(self, in_num, out_num,
+                 batch_norm=False,
+                 activation=nn.ReLU,
+                 dropout=0,  # zero is equivelant to identity (no dropout
+                 **kwargs):
+        super(FullyConnectedLayer, self).__init__()
+        self.batch_norm = batch_norm
+        self.fc = nn.Linear(in_num, out_num)
+        # self.bn = nn.BatchNorm2d(out_channels)
+        self.activation = activation()
+        self.dropout = nn.Dropout(dropout)
+
+    def forward(self, x):
+        x = self.fc(x)
+        x = self.activation(x)
+        x = self.dropout(x)
+        if self.batch_norm:
+            x = self.bn(x)
+        return x
+
 
 def load_weights(model, weights_path):
     if not os.path.isfile(weights_path):
@@ -69,3 +123,8 @@ def load_weights(model, weights_path):
 
 if __name__ == '__main__':
     # check network works (dev)
+    x = torch.zeros(1,1,128,128)
+    net = network()
+    out = net.forward(x)
+    print('in shape: ', x.shape)
+    print('out shape: ', out.shape)
