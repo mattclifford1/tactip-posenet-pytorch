@@ -1,4 +1,7 @@
 '''
+Author: Matt Clifford
+Email: matt.clifford@bristol.ac.uk
+
 pytorch data loader to read images and csv
 '''
 import pandas as pd
