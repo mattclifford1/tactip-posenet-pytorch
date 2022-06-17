@@ -15,7 +15,7 @@ import networks.tacnet as t_net
 
 
 class test_tacnet(unittest.TestCase):
-    def test_can_start(self):
+    def test_diff_size_net_inputs(self):
         self.make_and_run_square_net(128)
         self.make_and_run_square_net(256)
         # self.make_and_run_square_net(512)
