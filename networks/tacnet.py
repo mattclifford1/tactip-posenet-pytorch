@@ -24,7 +24,7 @@ class network(nn.Module):
 
     def contruct_layers(self):
         # CONVOLUTIONS
-        self.conv_layers = {}
+        self.conv_layers = nn.ModuleDict({})
         dim = 1 # input is grey scale
         for layer in range(self.num_conv_layers):
             conv_layer = ConvBlock(dim, self.conv_size,
@@ -33,14 +33,15 @@ class network(nn.Module):
                                    )
             self.conv_layers['conv_'+str(layer)] = conv_layer
             dim = self.conv_size
-
+        # self.conv_layers = nn.ModuleDict(self.conv_layers)
         # FULLY CONNECTED
-        self.fc_layers = {}
+        self.fc_layers = nn.ModuleDict({})
         prev_num = self.get_out_conv_shape()
         for layer in range(len(self.fc_layer_nums)):
             fc_layer = FullyConnectedLayer(prev_num, self.fc_layer_nums[layer])
             self.fc_layers['fc_'+str(layer)] = fc_layer
             prev_num = self.fc_layer_nums[layer]
+        # self.fc_layers = nn.ModuleDict(self.fc_layers)
 
 
     def get_out_conv_shape(self):
