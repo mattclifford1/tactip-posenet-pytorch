@@ -109,6 +109,6 @@ if __name__ == '__main__':
                                         ARGS.image_dir)
 
     model = t_net.network((128, 128))
-    model.apply(t_net.weights_init_normal)
+    model.apply(t_net.weights_init_normal) # check this works properly
     t = trainer(training_data, model, epochs=ARGS.epochs)
     t.start()
