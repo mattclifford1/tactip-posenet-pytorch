@@ -11,6 +11,7 @@ network
 
 trainer
 - optimiser regulariser
+- why isn't it training well?
 
 validation
 - give dataset and loop over to get MAE
