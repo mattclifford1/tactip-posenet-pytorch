@@ -69,7 +69,7 @@ class trainer():
             for step, sample in enumerate(tqdm(self.torch_dataloader_train, desc="Train Steps", leave=False)):
                 self.train_step(sample)
             if self.epoch%self.val_every == 0:
-                self.val_all(self.epoch+1)
+                # self.val_all(self.epoch+1)
                 print(np.mean(self.running_loss))
 
 
