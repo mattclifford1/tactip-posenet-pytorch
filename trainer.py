@@ -5,6 +5,7 @@ Email: matt.clifford@bristol.ac.uk
 training of nueral network
 '''
 import multiprocessing
+import numpy as np
 
 import torch
 import torch.nn as nn
