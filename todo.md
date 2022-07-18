@@ -1,8 +1,7 @@
 # List of Dev todos
 
 dataloader
-- full args for pytorch dataloader
-- tests for pytorch dataloader
+- just give task
 
 network
 - flexible to let user define different conv channel sizes

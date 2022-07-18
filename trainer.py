@@ -19,13 +19,14 @@ import multiprocessing
 import dataloader
 
 class trainer():
-    def __init__(self, dataset, model,
+    def __init__(self, dataset_train,
+                       model,
                        batch_size=64,
                        lr=1e-4,
                        input_size=(128,128),
                        decay=1e-6,
                        epochs=100):
-        self.dataset = dataset
+        self.dataset_train = dataset_train
         self.model = model
         self.batch_size = batch_size
         self.lr = lr
@@ -36,13 +37,13 @@ class trainer():
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.cores = multiprocessing.cpu_count()
         # get data loader
-        self.get_data_loader(prefetch_factor=2)
+        self.get_data_loader(prefetch_factor=1)
 
     def get_data_loader(self, prefetch_factor=1):
         cores = int(self.cores/2)
-        self.torch_dataloader = DataLoader(self.dataset,
+        self.torch_dataloader_train = DataLoader(self.dataset_train,
                                      batch_size=self.batch_size,
-                                     shuffle=False,
+                                     shuffle=True,
                                      num_workers=cores,
                                      prefetch_factor=prefetch_factor)
 
@@ -55,13 +56,21 @@ class trainer():
         # set up model for training
         self.model = self.model.to(self.device)
         self.model.train()
+        self.running_loss = [0]
 
 
-    def start(self):
+    def start(self, val_every=1):
         self.setup()
+        # self.get_saver()
+        self.val_every = val_every
         for epoch in tqdm(range(self.epochs), desc="Epochs"):
-            for step, sample in enumerate(tqdm(self.torch_dataloader, desc="Train Steps", leave=False)):
-                continue
+            self.epoch = epoch
+            self.running_loss = []
+            for step, sample in enumerate(tqdm(self.torch_dataloader_train, desc="Train Steps", leave=False)):
+                self.train_step(sample)
+            if self.epoch%self.val_every == 0:
+                self.val_all(self.epoch+1)
+                print(np.mean(self.running_loss))
 
 
     def train_step(self, sample):
@@ -72,11 +81,11 @@ class trainer():
         # forward
         pred = self.model(im)
         # loss
-        loss = self.loss(im, sample['label'])
+        loss = self.loss(pred, sample['label'])
         # backward pass
         loss.backward()
         self.optimiser.step()
-        # self.running_loss.append(loss.cpu().detach().numpy()) # save the loss stats
+        self.running_loss.append(loss.cpu().detach().numpy()) # save the loss stats
 
 
 
@@ -87,11 +96,13 @@ if __name__ == '__main__':
     parser = ArgumentParser(description='data dir and model type')
     parser.add_argument("--csv", default='dev-data/tactip-127/model_surface2d/targets.csv', type=str, help='targets.csv file')
     parser.add_argument("--image_dir", default='dev-data/tactip-127/model_surface2d/frames_bw', type=str, help='folder where images are located')
+    parser.add_argument("--batch_size",type=int,  default=64, help='batch size to load and train on')
+    parser.add_argument("--epochs", type=int, default=100, help='number of epochs to train for')
+    parser.add_argument("--ram", default=False, action='store_true', help='load dataset into ram')
     ARGS = parser.parse_args()
     training_data = dataloader.get_data(ARGS.csv,
                                         ARGS.image_dir)
 
     model = t_net.network((128, 128))
-    print(model.parameters())
-    t = trainer(training_data, model, epochs=1)
+    t = trainer(training_data, model, epochs=ARGS.epochs)
     t.start()
