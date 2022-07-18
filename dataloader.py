@@ -22,13 +22,19 @@ class get_data:
                  image_dir,
                  transform=None,
                  x_name='image_name',
-                 y_names=['pose_2', 'pose_6']):
+                 y_names=['pose_2', 'pose_6'],
+                 val=False,
+                 store_ram=False,):
         self.csv = csv
         self.image_dir = image_dir
         self.transform = transform
         self.x_name = x_name
         self.y_names = y_names
+        self.split_type = 'csv_val' if val else 'csv_train'
         self.read_data()
+        self.store_ram = store_ram
+        if self.store_ram == True:
+            self.load_images_to_ram()
 
     def read_data(self):
         self.df = pd.read_csv(self.csv)
@@ -37,6 +43,12 @@ class get_data:
         for label in self.y_names:
             self.labels[label] = self.df[label].tolist()
 
+    def load_images_to_ram(self):
+        print('Loading all images into RAM')
+        self.images_in_ram = []
+        for image_path in self.image_paths:
+            self.images_in_ram.append(io.imread(os.path.join(self.image_dir, image_path)))
+
     def __len__(self):
         return self.df.shape[0]
 
@@ -44,8 +56,11 @@ class get_data:
         if torch.is_tensor(i):
             i = i.tolist()
         # get image
-        image_path = self.image_paths[i]
-        image = io.imread(os.path.join(self.image_dir, image_path))
+        if self.store_ram == True:  # get pre loaded from ram
+            image = self.images_in_ram[i]
+        else:
+            image_path = self.image_paths[i]
+            image = io.imread(os.path.join(self.image_dir, image_path))
         sample = {'image': image}
         # data transforms
         if self.transform:
