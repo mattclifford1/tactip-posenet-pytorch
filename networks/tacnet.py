@@ -9,6 +9,7 @@ import torch.nn as nn
 from torchvision import transforms
 import os
 import errno
+import numpy as np
 
 
 class network(nn.Module):
@@ -90,6 +91,26 @@ class network(nn.Module):
         if x.shape[2] != H and x.shape[3] != W:
             x = transforms.Resize((H, W))(x)
         return x
+
+# def init_weights(m):
+#     if isinstance(m, nn.Linear):
+#         torch.nn.init.xavier_uniform(m.weight)
+#         m.bias.data.fill_(0.01)
+
+def weights_init_normal(model):
+    classname = model.__class__.__name__
+    # for every Linear layer in a model
+    if isinstance(model, nn.Linear):
+        y = model.in_features
+    # model.weight.data shoud be taken from a normal distribution
+        model.weight.data.normal_(0.0,1/np.sqrt(y))
+    # model.bias.data should be 0
+        model.bias.data.fill_(0)
+    if isinstance(model, nn.Conv2d):
+        torch.nn.init.normal_(model.weight.data, 0.0, 0.02)
+    elif classname.find("BatchNorm2d") != -1:
+        torch.nn.init.normal_(model.weight.data, 1.0, 0.02)
+        torch.nn.init.constant_(model.bias.data, 0.0)
 
 
 class ConvBlock(nn.Module):

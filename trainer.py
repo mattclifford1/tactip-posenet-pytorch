@@ -35,7 +35,7 @@ class trainer():
         self.input_size = input_size
         self.decay = decay
         self.epochs = epochs
-        sefl.l2_reg = l2_reg
+        self.l2_reg = l2_reg
         # misc inits
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.cores = multiprocessing.cpu_count()
@@ -109,5 +109,6 @@ if __name__ == '__main__':
                                         ARGS.image_dir)
 
     model = t_net.network((128, 128))
+    model.apply(t_net.weights_init_normal)
     t = trainer(training_data, model, epochs=ARGS.epochs)
     t.start()
