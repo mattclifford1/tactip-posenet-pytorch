@@ -76,12 +76,13 @@ class trainer():
     def train_step(self, sample):
         # get training batch sample
         im = sample['image'].to(device=self.device, dtype=torch.float)
+        label = sample['label'].to(device=self.device, dtype=torch.float)
         # zero the parameter gradients
         self.optimiser.zero_grad()
         # forward
         pred = self.model(im)
         # loss
-        loss = self.loss(pred, sample['label'])
+        loss = self.loss(pred, label)
         # backward pass
         loss.backward()
         self.optimiser.step()
