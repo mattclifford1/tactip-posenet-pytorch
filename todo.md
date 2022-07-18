@@ -2,6 +2,9 @@
 
 dataloader
 - just give task
+  - know what csv to load (train/validation)
+  - know what pose to use
+
 
 network
 - flexible to let user define different conv channel sizes
