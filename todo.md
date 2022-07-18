@@ -11,6 +11,7 @@ network
 
 trainer
 - optimiser regulariser
+- add lr decay
 - why isn't it training well?
 
 validation

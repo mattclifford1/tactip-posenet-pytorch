@@ -26,7 +26,8 @@ class trainer():
                        lr=1e-4,
                        input_size=(128,128),
                        decay=1e-6,
-                       epochs=100):
+                       epochs=100,
+                       l2_reg=0.001):
         self.dataset_train = dataset_train
         self.model = model
         self.batch_size = batch_size
@@ -34,6 +35,7 @@ class trainer():
         self.input_size = input_size
         self.decay = decay
         self.epochs = epochs
+        sefl.l2_reg = l2_reg
         # misc inits
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.cores = multiprocessing.cpu_count()
@@ -50,7 +52,7 @@ class trainer():
 
     def setup(self):
         # optimser
-        self.optimiser = optim.Adam(self.model.parameters(), self.lr)
+        self.optimiser = optim.Adam(self.model.parameters(), self.lr, weight_decay=self.l2_reg)
         # self.scheduler = ExponentialLR(self.optimiser, gamma=self.lr_decay)
         # loss criterion for training signal
         self.loss = nn.MSELoss()
