@@ -78,6 +78,7 @@ class trainer():
     def train_step(self, sample):
         # get training batch sample
         im = sample['image'].to(device=self.device, dtype=torch.float)
+        print(im.shape)
         label = sample['label'].to(device=self.device, dtype=torch.float)
         # zero the parameter gradients
         self.optimiser.zero_grad()
@@ -106,11 +107,14 @@ if __name__ == '__main__':
     parser.add_argument("--epochs", type=int, default=100, help='number of epochs to train for')
     parser.add_argument("--ram", default=False, action='store_true', help='load dataset into ram')
     ARGS = parser.parse_args()
+    data_trans = transforms.Compose([dataloader.rescale((128,128)),
+                                     dataloader.grey_scale()])
     training_data = dataloader.get_data(ARGS.csv,
-                                        ARGS.image_dir)
+                                        ARGS.image_dir,
+                                        transform=data_trans)
 
-    # model = t_net.network((128, 128))
-    model = m_128.network()
+    model = t_net.network((128, 128))
+    # model = m_128.network()
 
     model.apply(t_net.weights_init_normal) # check this works properly
     t = trainer(training_data, model, epochs=ARGS.epochs)
