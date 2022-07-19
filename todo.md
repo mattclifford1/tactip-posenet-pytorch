@@ -9,11 +9,10 @@ dataloader
 network
 - flexible to let user define different conv channel sizes
 
+
 trainer
-- optimiser regulariser
-- add lr decay
 - l1 regulariser also
-- why isn't it training well?
+
 
 validation
 - give dataset and loop over to get MAE
