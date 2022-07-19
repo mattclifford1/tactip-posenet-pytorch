@@ -86,9 +86,9 @@ class trainer():
         pred = self.model(im)
         # loss
         loss = self.loss(pred, label)
-        print('pred:', pred)
-        print('label:', label)
-        print('loss:', loss)
+        # print('pred:', pred)
+        # print('label:', label)
+        # print('loss:', loss)
         # backward pass
         loss.backward()
         self.optimiser.step()
