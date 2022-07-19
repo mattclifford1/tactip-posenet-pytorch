@@ -97,6 +97,7 @@ class trainer():
 
 if __name__ == '__main__':
     import networks.tacnet as t_net
+    import networks.model_128 m_128
     from argparse import ArgumentParser
     parser = ArgumentParser(description='data dir and model type')
     parser.add_argument("--csv", default='dev-data/tactip-127/model_surface2d/targets.csv', type=str, help='targets.csv file')
@@ -108,7 +109,9 @@ if __name__ == '__main__':
     training_data = dataloader.get_data(ARGS.csv,
                                         ARGS.image_dir)
 
-    model = t_net.network((128, 128))
+    # model = t_net.network((128, 128))
+    model = m_128.network()
+    
     model.apply(t_net.weights_init_normal) # check this works properly
     t = trainer(training_data, model, epochs=ARGS.epochs)
     t.start()

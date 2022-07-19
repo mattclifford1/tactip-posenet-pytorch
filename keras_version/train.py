@@ -81,14 +81,15 @@ def main(ARGS):
 
     cnn = CNNmodel()
     cnn.build_model(**meta)
-    history = cnn.fit_model(**meta, verbose=1)
-
-    # Save and plot training history
-    history_df = pd.DataFrame(history)
-    history_df.index += 1
-    history_df.to_csv(os.path.join(model_abs_dir, "history.csv"), index=False)
-    fig = plot_history(history_df)
-    fig.savefig(os.path.join(model_abs_dir, "history.png"), bbox_inches="tight", pad_inches=0)
+    cnn.print_model_summary()
+    # history = cnn.fit_model(**meta, verbose=1)
+    #
+    # # Save and plot training history
+    # history_df = pd.DataFrame(history)
+    # history_df.index += 1
+    # history_df.to_csv(os.path.join(model_abs_dir, "history.csv"), index=False)
+    # fig = plot_history(history_df)
+    # fig.savefig(os.path.join(model_abs_dir, "history.png"), bbox_inches="tight", pad_inches=0)
 
 
 if __name__ == '__main__':
