@@ -110,7 +110,6 @@ class trainer():
 
 
     def val_all(self, epoch):
-        print('Epoch ', str(epoch), ' training loss: ', np.mean(self.running_loss))
         self.model.eval()
         MAEs = []
         for step, sample in enumerate(tqdm(self.torch_dataloader_val, desc="Val Steps", leave=False)):
@@ -122,7 +121,8 @@ class trainer():
             MAEs.append(mae.cpu().detach().numpy())
         self.model.train()
         self.MAE = sum(MAEs) / len(MAEs)
-        print('Epoch ', str(epoch), ' val MAE: ', self.MAE)
+        print('Epoch ', str(epoch), ' training loss: ', np.mean(self.running_loss))
+        print('Epoch ', str(epoch), ' validation MAE:', self.MAE)
 
         # stats = {'epoch': [epoch],
         #          'mean training loss': [np.mean(self.running_loss)],
