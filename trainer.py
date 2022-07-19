@@ -13,16 +13,18 @@ import torch.optim as optim
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
-from torch.optim.lr_scheduler import ExponentialLR
+from torch.optim.lr_scheduler import ExponentialLR, LambdaLR
 
 from tqdm import tqdm
 import multiprocessing
 import dataloader
 
+import matplotlib.pyplot as plt
+
 class trainer():
     def __init__(self, dataset_train,
                        model,
-                       batch_size=64,
+                       batch_size=16,
                        lr=1e-4,
                        input_size=(128,128),
                        decay=1e-6,
@@ -53,6 +55,8 @@ class trainer():
     def setup(self):
         # optimser
         self.optimiser = optim.Adam(self.model.parameters(), self.lr, weight_decay=self.l2_reg)
+        lambda_lr = lambda iterations: (1. / (1. + self.decay * iterations))
+        self.scheduler = LambdaLR(self.optimiser, lr_lambda=lambda_lr)
         # self.scheduler = ExponentialLR(self.optimiser, gamma=self.lr_decay)
         # loss criterion for training signal
         self.loss = nn.MSELoss()
@@ -92,11 +96,25 @@ class trainer():
         # backward pass
         loss.backward()
         self.optimiser.step()
+        t_loss = loss.cpu().detach().numpy()
+        # print(t_loss)
         self.running_loss.append(loss.cpu().detach().numpy()) # save the loss stats
+        self.scheduler.step()
+        # self.show_im(sample)
+        # self.show_im(sample, 1)
 
     def val_all(self, epoch):
         print('Epoch ', str(epoch), ': ', np.mean(self.running_loss))
 
+    def show_im(self, sample, i=0):
+        im_numpy = sample['image'][i,:,:,:].cpu().detach().numpy()
+        im_numpy = np.swapaxes(im_numpy,0,1)
+        im_numpy = np.swapaxes(im_numpy,1,2)
+        plt.imshow(im_numpy, cmap='gray')
+        print('Max im value: ', sample['image'].max())
+        print('Labels: ', sample['label'])
+        print('Label names: ', sample['label_names'])
+        plt.show()
 
 
 if __name__ == '__main__':
@@ -119,7 +137,7 @@ if __name__ == '__main__':
 
     # model = t_net.network((128, 128))
     model = m_128.network()
-
+    print(model)
     model.apply(t_net.weights_init_normal) # check this works properly
     t = trainer(training_data, model,
                 batch_size=ARGS.batch_size,

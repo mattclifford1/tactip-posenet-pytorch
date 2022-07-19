@@ -50,46 +50,46 @@ class ConvBlock(nn.Module):
     def __init__(self, in_channels, out_channels,
                  kernel_size,
                  batch_norm=False,
-                 activation=nn.ReLU,
+                 activation=nn.ELU,
                  dropout=0,  # zero is equivelant to identity (no dropout)
                  **kwargs):
         super(ConvBlock, self).__init__()
-        self.batch_norm = batch_norm
+        # self.batch_norm = batch_norm
         self.conv = nn.Conv2d(in_channels, out_channels, kernel_size, **kwargs)
         self.max_pool = nn.MaxPool2d(2, stride=2)
-        self.bn = nn.BatchNorm2d(out_channels)
+        # self.bn = nn.BatchNorm2d(out_channels)
         self.activation = activation()
-        self.dropout = nn.Dropout(dropout)
+        # self.dropout = nn.Dropout(dropout)
 
     def forward(self, x):
         x = self.conv(x)
         x = self.activation(x)
         x = self.max_pool(x)
-        x = self.dropout(x)
-        if self.batch_norm:
-            x = self.bn(x)
+        # x = self.dropout(x)
+        # if self.batch_norm:
+        #     x = self.bn(x)
         return x
 
 
 class FullyConnectedLayer(nn.Module):
     def __init__(self, in_num, out_num,
                  batch_norm=False,
-                 activation=nn.ReLU,
+                 activation=nn.ELU,
                  dropout=0,  # zero is equivelant to identity (no dropout
                  **kwargs):
         super(FullyConnectedLayer, self).__init__()
-        self.batch_norm = batch_norm
+        # self.batch_norm = batch_norm
         self.fc = nn.Linear(in_num, out_num)
         # self.bn = nn.BatchNorm2d(out_channels)
         self.activation = activation()
-        self.dropout = nn.Dropout(dropout)
+        # self.dropout = nn.Dropout(dropout)
 
     def forward(self, x):
         x = self.fc(x)
         x = self.activation(x)
-        x = self.dropout(x)
-        if self.batch_norm:
-            x = self.bn(x)
+        # x = self.dropout(x)
+        # if self.batch_norm:
+        #     x = self.bn(x)
         return x
 
 if __name__ == '__main__':
