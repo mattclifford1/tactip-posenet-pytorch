@@ -2,8 +2,8 @@
 
 dataloader
 - just give task
-  - know what csv to load (train/validation)
   - know what pose to use
+  - simpler image loading mechanism (remove weight transforms shite)
 
 
 network

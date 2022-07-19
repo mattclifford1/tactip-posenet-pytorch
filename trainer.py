@@ -76,6 +76,7 @@ class trainer():
             self.running_loss = []
             for step, sample in enumerate(tqdm(self.torch_dataloader_train, desc="Train Steps", leave=False)):
                 self.train_step(sample)
+                self.scheduler.step()
             if self.epoch%self.val_every == 0:
                 self.val_all(self.epoch+1)
 
@@ -99,22 +100,10 @@ class trainer():
         t_loss = loss.cpu().detach().numpy()
         # print(t_loss)
         self.running_loss.append(loss.cpu().detach().numpy()) # save the loss stats
-        self.scheduler.step()
-        # self.show_im(sample)
-        # self.show_im(sample, 1)
+
 
     def val_all(self, epoch):
         print('Epoch ', str(epoch), ': ', np.mean(self.running_loss))
-
-    def show_im(self, sample, i=0):
-        im_numpy = sample['image'][i,:,:,:].cpu().detach().numpy()
-        im_numpy = np.swapaxes(im_numpy,0,1)
-        im_numpy = np.swapaxes(im_numpy,1,2)
-        plt.imshow(im_numpy, cmap='gray')
-        print('Max im value: ', sample['image'].max())
-        print('Labels: ', sample['label'])
-        print('Label names: ', sample['label_names'])
-        plt.show()
 
 
 if __name__ == '__main__':
@@ -122,23 +111,17 @@ if __name__ == '__main__':
     import networks.model_128 as m_128
     from argparse import ArgumentParser
     parser = ArgumentParser(description='data dir and model type')
-    parser.add_argument("--csv", default='dev-data/tactip-127/model_surface2d/targets.csv', type=str, help='targets.csv file')
-    parser.add_argument("--image_dir", default='dev-data/tactip-127/model_surface2d/frames_bw', type=str, help='folder where images are located')
+    parser.add_argument("--dir", default='dev-data/tactip-127/model_surface2d', type=str, help='folder where data is located')
     parser.add_argument("--batch_size",type=int,  default=64, help='batch size to load and train on')
     parser.add_argument("--epochs", type=int, default=100, help='number of epochs to train for')
     parser.add_argument("--ram", default=False, action='store_true', help='load dataset into ram')
     ARGS = parser.parse_args()
-    data_trans = transforms.Compose([dataloader.rescale((128,128)),
-                                     # dataloader.grey_scale()
-                                     ])
-    training_data = dataloader.get_data(ARGS.csv,
-                                        ARGS.image_dir,
-                                        transform=data_trans)
+    training_data = dataloader.get_data(ARGS.dir)
 
     # model = t_net.network((128, 128))
     model = m_128.network()
-    print(model)
-    model.apply(t_net.weights_init_normal) # check this works properly
+    model.apply(t_net.weights_init_normal)
+
     t = trainer(training_data, model,
                 batch_size=ARGS.batch_size,
                 epochs=ARGS.epochs)

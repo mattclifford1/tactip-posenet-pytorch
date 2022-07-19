@@ -12,31 +12,59 @@ from torchvision import transforms
 import torch
 import random
 
+'''
+Classes that transform the image data
+Designed to be used in a modular fashion
+'''
+class rescale(object):
+    """Rescale the image in a sample to a given size.
+    Args:
+        output_size (tuple): Desired output size. Output is
+            matched to output_size.
+    """
+    def __init__(self, output_size):
+        assert isinstance(output_size, tuple)
+        self.output_size = output_size
+        new_h, new_w = self.output_size
+        self.new_h, self.new_w = int(new_h), int(new_w)
 
+    def __call__(self, sample):
+        for key in sample.keys():
+            sample[key] = transform.resize(sample[key], (self.new_h, self.new_w))
+        return sample
+        
 '''
 data object to be used with pytorch's dataloader
 '''
 class get_data:
     def __init__(self,
-                 csv,
-                 image_dir,
-                 transform=None,
-                 x_name='image_name',
+                 base_dir,
+                 transform=rescale((128,128)),
                  y_names=['pose_2', 'pose_6'],
                  val=False,
-                 store_ram=False,):
-        self.csv = csv
-        self.image_dir = image_dir
+                 store_ram=False,
+                 labels_range=None):
+        self.base_dir = base_dir
         self.transform = transform
-        self.x_name = x_name
         self.y_names = y_names
+        self.val = val
         self.split_type = 'csv_val' if val else 'csv_train'
+        self.labels_range = labels_range
         self.read_data()
         self.store_ram = store_ram
         if self.store_ram == True:
             self.load_images_to_ram()
 
     def read_data(self):
+        dir = 'test' if self.val else 'train'   # from nathans data repo
+        self.csv = os.path.join(self.base_dir, dir, 'targets.csv')
+        self.image_dir = os.path.join(self.base_dir, 'frames_bw')
+        self.x_name = 'image_name'
+        if not os.path.isfile(self.csv):
+            dir = 'csv_val' if self.val else 'csv_train'   # from sim2real data
+            self.csv = os.path.join(self.base_dir, dir, 'targets.csv')
+            self.image_dir = os.path.join(self.base_dir, dir, 'images')
+            self.x_name = 'sensor_image'
         self.df = pd.read_csv(self.csv)
         self.image_paths = self.df[self.x_name].tolist()
 
@@ -44,7 +72,8 @@ class get_data:
         self.labels_range = {}
         for label in self.y_names:
             # get min and max to normalise data
-            self.labels_range[label] = [round(self.df[label].min()), round(self.df[label].max())]
+            if self.val == False:   # calc how to normalise labels is using training set
+                self.labels_range[label] = [round(self.df[label].min()), round(self.df[label].max())]
             # interp to put into range (-1, 1)
             self.labels[label] = np.interp(self.df[label].tolist(), self.labels_range[label], (-1,1))
 
@@ -94,26 +123,6 @@ def numpy_image_torch_tensor(sample):
     return sample
 
 
-'''
-Classes that transform the image data
-Designed to be used in a modular fashion
-'''
-class rescale(object):
-    """Rescale the image in a sample to a given size.
-    Args:
-        output_size (tuple): Desired output size. Output is
-            matched to output_size.
-    """
-    def __init__(self, output_size):
-        assert isinstance(output_size, tuple)
-        self.output_size = output_size
-        new_h, new_w = self.output_size
-        self.new_h, self.new_w = int(new_h), int(new_w)
-
-    def __call__(self, sample):
-        for key in sample.keys():
-            sample[key] = transform.resize(sample[key], (self.new_h, self.new_w))
-        return sample
 
 class grey_scale(object):
     """Rescale the image in a sample to a given size.
