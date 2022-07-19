@@ -117,8 +117,8 @@ if __name__ == '__main__':
                                         ARGS.image_dir,
                                         transform=data_trans)
 
-    model = t_net.network((128, 128))
-    # model = m_128.network()
+    # model = t_net.network((128, 128))
+    model = m_128.network()
 
     model.apply(t_net.weights_init_normal) # check this works properly
     t = trainer(training_data, model,
