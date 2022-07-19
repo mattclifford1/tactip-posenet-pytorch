@@ -1,6 +1,7 @@
 # List of Dev todos
 
 dataloader
+(maybe change to just using the sim2real data?)
 - just give task
   - know what pose to use (update to 3d versions if given)
   - auto get either nathans data or sim2real
