@@ -86,6 +86,9 @@ class trainer():
         pred = self.model(im)
         # loss
         loss = self.loss(pred, label)
+        # print('pred:', pred)
+        # print('label:', label)
+        # print('loss:', loss)
         # backward pass
         loss.backward()
         self.optimiser.step()
@@ -118,5 +121,7 @@ if __name__ == '__main__':
     # model = m_128.network()
 
     model.apply(t_net.weights_init_normal) # check this works properly
-    t = trainer(training_data, model, epochs=ARGS.epochs)
+    t = trainer(training_data, model,
+                batch_size=ARGS.batch_size,
+                epochs=ARGS.epochs)
     t.start()

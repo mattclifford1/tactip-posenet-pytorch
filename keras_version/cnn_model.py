@@ -120,11 +120,16 @@ class CNNmodel:
         self._inds = [pose_.index(t) for t in target_names]
         self._scale = [[poses_rng[_][i] for _ in reversed(range(2))] for i in range(6)]
 
+        print(round(train_df[target_names].max()))
+        print(round(train_df[target_names].min()))
         for t, i in zip(target_names, self._inds):
             train_df[t] = np.interp(train_df[t], self._scale[i], (-1,1))
             valid_df[t] = np.interp(valid_df[t], self._scale[i], (-1,1))
+        print(train_df[target_names])
 
         train_datagen = ImageDataGenerator(rescale=1./255.)
+        # print(train_df[target_names])
+        # print(target_names)
         train_generator = train_datagen.flow_from_dataframe(
                                 dataframe=train_df,
                                 directory=train_image_dir,

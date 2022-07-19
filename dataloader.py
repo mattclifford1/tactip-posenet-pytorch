@@ -39,9 +39,14 @@ class get_data:
     def read_data(self):
         self.df = pd.read_csv(self.csv)
         self.image_paths = self.df[self.x_name].tolist()
+
         self.labels = {}
+        self.labels_range = {}
         for label in self.y_names:
-            self.labels[label] = self.df[label].tolist()
+            # get min and max to normalise data
+            self.labels_range[label] = [round(self.df[label].min()), round(self.df[label].max())]
+            # interp to put into range (-1, 1)
+            self.labels[label] = np.interp(self.df[label].tolist(), self.labels_range[label], (-1,1))
 
     def load_images_to_ram(self):
         print('Loading all images into RAM')
