@@ -32,7 +32,7 @@ class rescale(object):
         for key in sample.keys():
             sample[key] = transform.resize(sample[key], (self.new_h, self.new_w))
         return sample
-        
+
 '''
 data object to be used with pytorch's dataloader
 '''
@@ -40,13 +40,11 @@ class get_data:
     def __init__(self,
                  base_dir,
                  transform=rescale((128,128)),
-                 y_names=['pose_2', 'pose_6'],
                  val=False,
                  store_ram=False,
-                 labels_range=None):
+                 labels_range={}):
         self.base_dir = base_dir
         self.transform = transform
-        self.y_names = y_names
         self.val = val
         self.split_type = 'csv_val' if val else 'csv_train'
         self.labels_range = labels_range
@@ -60,16 +58,17 @@ class get_data:
         self.csv = os.path.join(self.base_dir, dir, 'targets.csv')
         self.image_dir = os.path.join(self.base_dir, 'frames_bw')
         self.x_name = 'image_name'
+        self.y_names = ['pose_2', 'pose_6']
         if not os.path.isfile(self.csv):
             dir = 'csv_val' if self.val else 'csv_train'   # from sim2real data
             self.csv = os.path.join(self.base_dir, dir, 'targets.csv')
             self.image_dir = os.path.join(self.base_dir, dir, 'images')
             self.x_name = 'sensor_image'
+            self.y_names = ['pose_3', 'pose_4']
         self.df = pd.read_csv(self.csv)
         self.image_paths = self.df[self.x_name].tolist()
 
         self.labels = {}
-        self.labels_range = {}
         for label in self.y_names:
             # get min and max to normalise data
             if self.val == False:   # calc how to normalise labels is using training set

@@ -23,6 +23,7 @@ import matplotlib.pyplot as plt
 
 class trainer():
     def __init__(self, dataset_train,
+                       dataset_val,
                        model,
                        batch_size=16,
                        lr=1e-4,
@@ -31,6 +32,7 @@ class trainer():
                        epochs=100,
                        l2_reg=0.001):
         self.dataset_train = dataset_train
+        self.dataset_val = dataset_val
         self.model = model
         self.batch_size = batch_size
         self.lr = lr
@@ -50,6 +52,11 @@ class trainer():
                                      batch_size=self.batch_size,
                                      shuffle=True,
                                      num_workers=cores,
+                                     prefetch_factor=prefetch_factor)
+        self.torch_dataloader_val = DataLoader(self.dataset_val,
+                                     batch_size=self.batch_size,
+                                     shuffle=True,
+                                     num_workers=max(1, int(cores/4)),
                                      prefetch_factor=prefetch_factor)
 
     def setup(self):
@@ -103,7 +110,24 @@ class trainer():
 
 
     def val_all(self, epoch):
-        print('Epoch ', str(epoch), ': ', np.mean(self.running_loss))
+        print('Epoch ', str(epoch), ' training loss: ', np.mean(self.running_loss))
+        self.model.eval()
+        MAEs = []
+        for step, sample in enumerate(tqdm(self.torch_dataloader_val, desc="Val Steps", leave=False)):
+            # get val batch sample
+            im = sample['image'].to(device=self.device, dtype=torch.float)
+            label = sample['label'].to(device=self.device, dtype=torch.float)
+            pred = self.model(im)
+            mae = torch.abs(pred - label).mean()
+            MAEs.append(mae.cpu().detach().numpy())
+        self.model.train()
+        self.MAE = sum(MAEs) / len(MAEs)
+        # stats = {'epoch': [epoch],
+        #          'mean training loss': [np.mean(self.running_loss)],
+        #          'val MAE': [self.MAE],
+        # self.saver.log_training_stats(stats)
+        # self.saver.log_val_images(ims, epoch)
+        # self.maybe_save_model()
 
 
 if __name__ == '__main__':
@@ -117,12 +141,15 @@ if __name__ == '__main__':
     parser.add_argument("--ram", default=False, action='store_true', help='load dataset into ram')
     ARGS = parser.parse_args()
     training_data = dataloader.get_data(ARGS.dir)
+    validation_data = dataloader.get_data(ARGS.dir, val=True, labels_range=training_data.labels_range)
 
     # model = t_net.network((128, 128))
     model = m_128.network()
     model.apply(t_net.weights_init_normal)
 
-    t = trainer(training_data, model,
+    t = trainer(training_data,
+                validation_data,
+                model,
                 batch_size=ARGS.batch_size,
                 epochs=ARGS.epochs)
     t.start()
