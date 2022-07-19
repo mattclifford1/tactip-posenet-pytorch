@@ -140,8 +140,8 @@ if __name__ == '__main__':
     parser.add_argument("--epochs", type=int, default=100, help='number of epochs to train for')
     parser.add_argument("--ram", default=False, action='store_true', help='load dataset into ram')
     ARGS = parser.parse_args()
-    training_data = dataloader.get_data(ARGS.dir)
-    validation_data = dataloader.get_data(ARGS.dir, val=True, labels_range=training_data.labels_range)
+    training_data = dataloader.get_data(ARGS.dir, store_ram=ARGS.ram)
+    validation_data = dataloader.get_data(ARGS.dir, store_ram=ARGS.ram, val=True, labels_range=training_data.labels_range)
 
     # model = t_net.network((128, 128))
     model = m_128.network()
