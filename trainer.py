@@ -78,7 +78,6 @@ class trainer():
     def train_step(self, sample):
         # get training batch sample
         im = sample['image'].to(device=self.device, dtype=torch.float)
-        print(im.shape)
         label = sample['label'].to(device=self.device, dtype=torch.float)
         # zero the parameter gradients
         self.optimiser.zero_grad()
