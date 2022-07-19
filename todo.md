@@ -2,21 +2,23 @@
 
 dataloader
 - just give task
-  - know what pose to use
+  - know what pose to use (update to 3d versions if given)
   - simpler image loading mechanism (remove weight transforms shite)
 
 
 network
 - flexible to let user define different conv channel sizes
-
+- change output size depending on 2d/3d
 
 trainer
 - l1 regulariser also
 
 
-validation
-- give dataset and loop over to get MAE
-- choose device
+validaiton
+- save stats
+- save models
+- script to eval
+  - give model dir and dataloader - return MAE
 
 
 over-arching

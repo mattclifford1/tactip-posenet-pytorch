@@ -121,7 +121,7 @@ class trainer():
             MAEs.append(mae.cpu().detach().numpy())
         self.model.train()
         self.MAE = sum(MAEs) / len(MAEs)
-        print('Epoch ', str(epoch), ' training loss: ', np.mean(self.running_loss))
+        print('\nEpoch ', str(epoch), ' training loss: ', np.mean(self.running_loss))
         print('Epoch ', str(epoch), ' validation MAE:', self.MAE)
 
         # stats = {'epoch': [epoch],
