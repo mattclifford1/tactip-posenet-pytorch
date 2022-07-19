@@ -108,7 +108,8 @@ if __name__ == '__main__':
     parser.add_argument("--ram", default=False, action='store_true', help='load dataset into ram')
     ARGS = parser.parse_args()
     data_trans = transforms.Compose([dataloader.rescale((128,128)),
-                                     dataloader.grey_scale()])
+                                     # dataloader.grey_scale()
+                                     ])
     training_data = dataloader.get_data(ARGS.csv,
                                         ARGS.image_dir,
                                         transform=data_trans)
