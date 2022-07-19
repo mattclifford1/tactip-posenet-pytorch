@@ -1,4 +1,7 @@
 # List of Dev todos
+CODE validation
+- compare MAE of keras model to torch model
+- write pytests!!!!
 
 dataloader
 (maybe change to just using the sim2real data?)
