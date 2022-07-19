@@ -59,12 +59,15 @@ class get_data:
         self.image_dir = os.path.join(self.base_dir, 'frames_bw')
         self.x_name = 'image_name'
         self.y_names = ['pose_2', 'pose_6']
+        self.task = 'surface_3d' # change this
+        self.data_type = 'nathan_'
         if not os.path.isfile(self.csv):
             dir = 'csv_val' if self.val else 'csv_train'   # from sim2real data
             self.csv = os.path.join(self.base_dir, dir, 'targets.csv')
             self.image_dir = os.path.join(self.base_dir, dir, 'images')
             self.x_name = 'sensor_image'
             self.y_names = ['pose_3', 'pose_4']
+            self.data_type = 'sim_'
         self.df = pd.read_csv(self.csv)
         self.image_paths = self.df[self.x_name].tolist()
 

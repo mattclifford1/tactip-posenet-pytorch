@@ -5,6 +5,10 @@ history.csv
 errors.png
 test2d_cnn
 train2d_cnn
+dev-data/*/*/models
+dev-data/*/*/results
+dev-data/*/*/pose_estimation
+dev-data/*/*/*/pose_estimation
 
 
 

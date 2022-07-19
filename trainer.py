@@ -6,6 +6,7 @@ training of nueral network
 '''
 import multiprocessing
 import numpy as np
+import os
 
 import torch
 import torch.nn as nn
@@ -18,6 +19,7 @@ from torch.optim.lr_scheduler import ExponentialLR, LambdaLR
 from tqdm import tqdm
 import multiprocessing
 import dataloader
+import utils
 
 import matplotlib.pyplot as plt
 
@@ -30,7 +32,8 @@ class trainer():
                        input_size=(128,128),
                        decay=1e-6,
                        epochs=100,
-                       l2_reg=0.001):
+                       l2_reg=0.001,
+                       save_dir=None):
         self.dataset_train = dataset_train
         self.dataset_val = dataset_val
         self.model = model
@@ -40,11 +43,13 @@ class trainer():
         self.decay = decay
         self.epochs = epochs
         self.l2_reg = l2_reg
+        self.save_dir = save_dir
         # misc inits
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.cores = multiprocessing.cpu_count()
         # get data loader
         self.get_data_loader(prefetch_factor=1)
+        self.get_saver()
 
     def get_data_loader(self, prefetch_factor=1):
         cores = int(self.cores/2)
@@ -59,6 +64,14 @@ class trainer():
                                      num_workers=max(1, int(cores/4)),
                                      prefetch_factor=prefetch_factor)
 
+    def get_saver(self):
+        self.saver = utils.train_saver(self.save_dir,
+                                 self.model,
+                                 self.lr,
+                                 self.batch_size,
+                                 self.dataset_train.task,
+                                 self.dataset_train.data_type)
+
     def setup(self):
         # optimser
         self.optimiser = optim.Adam(self.model.parameters(), self.lr, weight_decay=self.l2_reg)
@@ -70,7 +83,8 @@ class trainer():
         # set up model for training
         self.model = self.model.to(self.device)
         self.model.train()
-        self.running_loss = [0]
+        self.running_loss = [1]
+        self.current_training_loss = 1
 
 
     def start(self, val_every=1):
@@ -82,10 +96,14 @@ class trainer():
             self.epoch = epoch
             self.running_loss = []
             for step, sample in enumerate(tqdm(self.torch_dataloader_train, desc="Train Steps", leave=False)):
+                if step == 2:
+                    break
                 self.train_step(sample)
                 self.scheduler.step()
             if self.epoch%self.val_every == 0:
                 self.val_all(self.epoch+1)
+        # # training finished
+        self.saver.save_model(self.model, 'final_model')
 
 
     def train_step(self, sample):
@@ -110,9 +128,13 @@ class trainer():
 
 
     def val_all(self, epoch):
+        self.previous_training_loss = self.current_training_loss
+        self.current_training_loss = np.mean(self.running_loss)
         self.model.eval()
         MAEs = []
         for step, sample in enumerate(tqdm(self.torch_dataloader_val, desc="Val Steps", leave=False)):
+            if step == 2:
+                break
             # get val batch sample
             im = sample['image'].to(device=self.device, dtype=torch.float)
             label = sample['label'].to(device=self.device, dtype=torch.float)
@@ -124,12 +146,16 @@ class trainer():
         print('\nEpoch ', str(epoch), ' training loss: ', np.mean(self.running_loss))
         print('Epoch ', str(epoch), ' validation MAE:', self.MAE)
 
-        # stats = {'epoch': [epoch],
-        #          'mean training loss': [np.mean(self.running_loss)],
-        #          'val MAE': [self.MAE],
-        # self.saver.log_training_stats(stats)
-        # self.saver.log_val_images(ims, epoch)
-        # self.maybe_save_model()
+        stats = {'epoch': [epoch],
+                 'mean training loss': [np.mean(self.running_loss)],
+                 'val MAE': [self.MAE]}
+        self.saver.log_training_stats(stats)
+        self.maybe_save_model()
+
+    def maybe_save_model(self):
+        if self.previous_training_loss > self.current_training_loss:
+            print('saving model')
+            self.saver.save_model(self.model, 'best_model')
 
 
 if __name__ == '__main__':
@@ -153,5 +179,6 @@ if __name__ == '__main__':
                 validation_data,
                 model,
                 batch_size=ARGS.batch_size,
-                epochs=ARGS.epochs)
+                epochs=ARGS.epochs,
+                save_dir=os.path.join(ARGS.dir, 'models', 'pose_estimation'))
     t.start()

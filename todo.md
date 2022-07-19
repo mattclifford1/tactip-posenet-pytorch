@@ -3,20 +3,18 @@
 dataloader
 - just give task
   - know what pose to use (update to 3d versions if given)
+  - auto get either nathans data or sim2real
   - simpler image loading mechanism (remove weight transforms shite)
 
 
 network
-- flexible to let user define different conv channel sizes
 - change output size depending on 2d/3d
+- flexible to let user define different conv channel sizes
 
-trainer
-- l1 regulariser also
 
 
 validaiton
-- save stats
-- save models
+- better saving structure
 - script to eval
   - give model dir and dataloader - return MAE
 
