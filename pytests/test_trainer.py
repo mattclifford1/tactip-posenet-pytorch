@@ -10,6 +10,7 @@ sys.path.append(base_dir)
 
 import trainer, dataloader
 import networks.tacnet as t_net
+import networks.model_128 as m_128
 
 # tests
 # ====================================================
@@ -17,13 +18,20 @@ import networks.tacnet as t_net
 
 class test_trainer(unittest.TestCase):
     def setUp(self):
-        self.csv = join(base_dir, 'dev-data/tactip-127/model_surface2d/targets.csv')
-        self.image_dir = join(base_dir, 'dev-data/tactip-127/model_surface2d/frames_bw')
-        self.dataloader = dataloader.get_data(self.csv, self.image_dir)
-        self.model = t_net.network((128, 128))
+        self.dir = 'dev-data/tactip-127'
+        self.task = ['edge_2d', 'shear', 'real']
+        self.training_data = dataloader.get_data(self.dir, self.task, store_ram=False)
+        self.validation_data = dataloader.get_data(self.dir, self.task, store_ram=False, val=True, labels_range=self.training_data.labels_range)
+        self.model = m_128.network(final_size=2)
+        self.model.apply(t_net.weights_init_normal)
 
     def test_can_start(self):
-        t = trainer.trainer(self.dataloader, self.model, epochs=0)
+        t = trainer.trainer(self.training_data,
+                    self.validation_data,
+                    self.model,
+                    batch_size=16,
+                    epochs=0,
+                    save_dir=os.path.join(self.dir, 'models', 'pose_estimation'))
         t.start()
 
 

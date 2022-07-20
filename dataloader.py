@@ -87,7 +87,6 @@ class get_data:
 
     def read_data(self):
         self.get_meta_data()
-        print(self.csv)
         self.df = pd.read_csv(self.csv)
         self.image_paths = self.df[self.x_name].tolist()
 
