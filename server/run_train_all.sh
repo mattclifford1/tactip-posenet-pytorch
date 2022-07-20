@@ -19,7 +19,8 @@ task="surface_2d shear sim"
 sbatch -t $time -J $job_name -o $dir'.out' -e $dir'.err' --mem=$ram server/submit_job.sh python trainer.py --epochs $epochs --dir $data_dir --task $task --ram
 
 # on dev-data
+data_dir="/user/work/mc15445/summer-project/Nathan/tactip-127"
 task="edge_2d shear real"
-sbatch -t $time -J $job_name -o $dir'.out' -e $dir'.err' --mem=$ram server/submit_job.sh python trainer.py --epochs $epochs --task $task --ram
+sbatch -t $time -J $job_name -o $dir'.out' -e $dir'.err' --mem=$ram server/submit_job.sh python trainer.py --epochs $epochs --dir $data_dir --task $task --ram
 task="surface_2d shear real"
-sbatch -t $time -J $job_name -o $dir'.out' -e $dir'.err' --mem=$ram server/submit_job.sh python trainer.py --epochs $epochs --task $task --ram
+sbatch -t $time -J $job_name -o $dir'.out' -e $dir'.err' --mem=$ram server/submit_job.sh python trainer.py --epochs $epochs --dir $data_dir --task $task --ram
