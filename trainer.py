@@ -97,8 +97,8 @@ class trainer():
             self.epoch = epoch
             self.running_loss = []
             for step, sample in enumerate(tqdm(self.torch_dataloader_train, desc="Train Steps", leave=False)):
-                if step == 2:
-                    break
+                # if step == 2:
+                #     break
                 self.train_step(sample)
                 self.scheduler.step()
             if self.epoch%self.val_every == 0:
@@ -134,8 +134,8 @@ class trainer():
         self.model.eval()
         MAEs = []
         for step, sample in enumerate(tqdm(self.torch_dataloader_val, desc="Val Steps", leave=False)):
-            if step == 2:
-                break
+            # if step == 2:
+            #     break
             # get val batch sample
             im = sample['image'].to(device=self.device, dtype=torch.float)
             label = sample['label'].to(device=self.device, dtype=torch.float)
