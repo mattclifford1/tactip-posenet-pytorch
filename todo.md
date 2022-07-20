@@ -1,13 +1,14 @@
 # List of Dev todos
 CODE validation
-- compare MAE of keras model to torch model
+- compare MAE of keras model to torch model (keras: https://data.bris.ac.uk/data/dataset/110f0tkyy28pa2joru2pxxbrxd)
+  - keras data from above url:
+    - edge_2d:    [2, 6]  [0.15, 1.45]     331: [0.15, 1.66]
+    - surface_2d: [2, 6]  [0.08, 0.72]     331: [0.11, 0.73]
+    
 - write pytests!!!!
 
 dataloader
 (maybe change to just using the sim2real data?)
-- just give task
-  - know what pose to use (update to 3d versions if given)
-  - auto get either nathans data or sim2real
   - simpler image loading mechanism (remove weight transforms shite)
 
 
