@@ -172,7 +172,7 @@ if __name__ == '__main__':
     validation_data = dataloader.get_data(ARGS.dir, store_ram=ARGS.ram, val=True, labels_range=training_data.labels_range)
 
     # model = t_net.network((128, 128))
-    model = m_128.network()
+    model = m_128.network(final_size=2)
     model.apply(t_net.weights_init_normal)
 
     t = trainer(training_data,

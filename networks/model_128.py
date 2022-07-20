@@ -13,13 +13,14 @@ import errno
 import numpy as np
 
 class network(nn.Module):
-    def __init__(self):
+    def __init__(self, final_size=2):
         super(network, self).__init__()
         self.input_size = (1, 128, 128)
         self.conv_size = 256
         self.kernel_size = 3
         self.num_conv_layers = 5
-        self.fc_layer_nums = [64, 2]
+        self.fc_layer_nums = [64, final_size]
+        self.output_size = final_size
         self.contruct_layers()
 
     def contruct_layers(self):
