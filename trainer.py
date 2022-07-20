@@ -92,7 +92,7 @@ class trainer():
         self.setup()
         # self.get_saver()
         self.val_every = val_every
-        self.val_all(0)
+        # self.val_all(0)
         for epoch in tqdm(range(self.epochs), desc="Epochs"):
             self.epoch = epoch
             self.running_loss = []
