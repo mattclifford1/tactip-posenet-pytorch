@@ -21,6 +21,7 @@ class network(nn.Module):
         self.num_conv_layers = 5
         self.fc_layer_nums = [64, final_size]
         self.output_size = final_size
+        self.dimensions = '_' + str(final_size) + 'd'
         self.contruct_layers()
 
     def contruct_layers(self):

@@ -42,10 +42,10 @@ class train_saver:
         self.base_dir = base_dir
         self.task = task
         self.save_name = save_name
-        if hasattr(model, 'name'):
-            self.model_name = model.name
-        else:
-            self.model_name = model.__class__.__name__
+        # if hasattr(model, 'dimensions'):
+        #     self.model_dimensions = model.dimensions
+        # else:
+        #     self.model_dimensions = ''
         self.lr = lr
         self.batch_size = batch_size
         self.get_save_dir()
@@ -65,7 +65,7 @@ class train_saver:
         else:
             run_num = 0
         self.dir = os.path.join(self.dir, run_name+str(run_num))
-        self.models_dir = os.path.join(self.dir, 'models')
+        self.models_dir = os.path.join(self.dir, 'checkpoints')
         # make dirs is dont already exist
         if not os.path.exists(self.dir):
             os.makedirs(self.dir)

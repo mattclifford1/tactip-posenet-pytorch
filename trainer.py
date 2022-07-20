@@ -163,16 +163,17 @@ if __name__ == '__main__':
     import networks.model_128 as m_128
     from argparse import ArgumentParser
     parser = ArgumentParser(description='data dir and model type')
-    parser.add_argument("--dir", default='dev-data/tactip-127/model_surface2d', type=str, help='folder where data is located')
-    parser.add_argument("--batch_size",type=int,  default=64, help='batch size to load and train on')
+    parser.add_argument("--dir", default='dev-data/tactip-127', type=str, help='folder where data is located')
     parser.add_argument("--epochs", type=int, default=100, help='number of epochs to train for')
+    parser.add_argument("--task", type=str, nargs='+', default=['edge_2d', 'shear', 'real'], help='dataset to train on')
+    parser.add_argument("--batch_size",type=int,  default=16, help='batch size to load and train on')
     parser.add_argument("--ram", default=False, action='store_true', help='load dataset into ram')
     ARGS = parser.parse_args()
-    training_data = dataloader.get_data(ARGS.dir, store_ram=ARGS.ram)
-    validation_data = dataloader.get_data(ARGS.dir, store_ram=ARGS.ram, val=True, labels_range=training_data.labels_range)
+    training_data = dataloader.get_data(ARGS.dir, ARGS.task, store_ram=ARGS.ram)
+    validation_data = dataloader.get_data(ARGS.dir, ARGS.task, store_ram=ARGS.ram, val=True, labels_range=training_data.labels_range)
 
     # model = t_net.network((128, 128))
-    model = m_128.network(final_size=2)
+    model = m_128.network(final_size=int(ARGS.task[0][-2]))
     model.apply(t_net.weights_init_normal)
 
     t = trainer(training_data,

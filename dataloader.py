@@ -11,6 +11,7 @@ from skimage import io, transform, color
 from torchvision import transforms
 import torch
 import random
+import cv2
 
 '''
 Classes that transform the image data
@@ -39,35 +40,54 @@ data object to be used with pytorch's dataloader
 class get_data:
     def __init__(self,
                  base_dir,
+                 data_task = ('edge_2d',  'tap', 'real'),
                  transform=rescale((128,128)),
                  val=False,
                  store_ram=False,
-                 labels_range={}):
+                 labels_range={},
+                 sim2real_path='data/Bourne/tactip'):
         self.base_dir = base_dir
+        self.data_task = data_task
         self.transform = transform
         self.val = val
-        self.split_type = 'csv_val' if val else 'csv_train'
         self.labels_range = labels_range
+        self.sim2real_path = sim2real_path  # only for use with sim2real data
         self.read_data()
         self.store_ram = store_ram
         if self.store_ram == True:
             self.load_images_to_ram()
 
-    def read_data(self):
-        dir = 'test' if self.val else 'train'   # from nathans data repo
-        self.csv = os.path.join(self.base_dir, dir, 'targets.csv')
-        self.image_dir = os.path.join(self.base_dir, 'frames_bw')
+    def get_meta_data(self):
+        '''find data from either sim/real/pose data'''
+        # first try from nathans data structure
+        dir = 'test' if self.val else 'train'
+        data_name = 'model_surface2d' if self.data_task[0] == 'surface_2d' else 'model_edge2d'
+        self.csv = os.path.join(self.base_dir, data_name, dir, 'targets.csv')
+        self.image_dir = os.path.join(self.base_dir, data_name, 'frames_bw')
         self.x_name = 'image_name'
-        self.y_names = ['pose_2', 'pose_6']
-        self.task = 'surface_3d' # change this
         self.data_type = 'nathan_'
+        self.task = self.data_task[0]
+        if self.task == 'surface_2d':
+            self.y_names = ['pose_2', 'pose_6']
+        elif self.task == 'edge_2d':
+            self.y_names = ['pose_1', 'pose_6']
+        elif self.task == 'surface_3d':
+            self.y_names = ['pose_3', 'pose_4', 'pose_5']
+        else:
+            raise Exception('Incorrect task: '+str(self.task))
         if not os.path.isfile(self.csv):
             dir = 'csv_val' if self.val else 'csv_train'   # from sim2real data
-            self.csv = os.path.join(self.base_dir, dir, 'targets.csv')
-            self.image_dir = os.path.join(self.base_dir, dir, 'images')
+            path = os.path.join(self.base_dir, self.sim2real_path, self.data_task[2], self.data_task[0], self.data_task[1])
+            path = os.path.join(path, '128x128') if self.data_task[2] == 'sim' else path
+            path = os.path.join(path, dir)
+            self.csv = os.path.join(path, 'targets.csv')
+            self.image_dir = os.path.join(path, 'images')
             self.x_name = 'sensor_image'
-            self.y_names = ['pose_3', 'pose_4']
-            self.data_type = 'sim_'
+            self.data_type = self.data_task[2]+'_'   # sim or real
+
+    def read_data(self):
+        self.get_meta_data()
+        print(self.csv)
         self.df = pd.read_csv(self.csv)
         self.image_paths = self.df[self.x_name].tolist()
 
@@ -83,7 +103,32 @@ class get_data:
         print('Loading all images into RAM')
         self.images_in_ram = []
         for image_path in self.image_paths:
-            self.images_in_ram.append(io.imread(os.path.join(self.image_dir, image_path)))
+            self.images_in_ram.append(self.read_im(image_path))
+
+    def read_im(self, image_path):
+        '''need to preprocess different datasets in different ways'''
+        if self.data_type == 'nathan_':
+            return io.imread(os.path.join(self.image_dir, image_path))
+        image = cv2.imread(os.path.join(self.image_dir, image_path))
+        # Convert to gray scale
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        # Add channel axis
+        image = image[..., np.newaxis]
+        if self.data_type == 'real_':
+            # Crop to specified bounding box
+            bbox = [80,25,530,475]
+            x0, y0, x1, y1 = bbox
+            image = image[y0:y1, x0:x1]
+            # Resize to specified dims
+            image = cv2.resize(image, (128, 128), interpolation=cv2.INTER_AREA)
+            # Add channel axis
+            image = image[..., np.newaxis]
+            # threshold_image
+            image = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 11, -30)
+            image = image[..., np.newaxis]
+        return image.astype(np.float32) / 255.0
+
+
 
     def __len__(self):
         return self.df.shape[0]
@@ -96,7 +141,7 @@ class get_data:
             image = self.images_in_ram[i]
         else:
             image_path = self.image_paths[i]
-            image = io.imread(os.path.join(self.image_dir, image_path))
+            image = self.read_im(image_path)
         sample = {'image': image}
         # data transforms
         if self.transform:
