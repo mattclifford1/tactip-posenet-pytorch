@@ -9,8 +9,10 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 import logging
 logging.getLogger("tensorflow").setLevel(logging.ERROR)
 logging.getLogger("tensorflow").addHandler(logging.NullHandler(logging.ERROR))
-from pose_models_2d.lib.models.cnn_model import CNNmodel
+import sys; sys.path.append('..'); sys.path.append('.')
 from keras_version.cnn_model import CNNmodel
+from argparse import ArgumentParser
+
 
 def plot_pred(data_path, pred_df, target_names, model_file, meta_file, poses_rng, **kwargs):
     plt.rcParams.update({'font.size': 18})
