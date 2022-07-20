@@ -9,6 +9,7 @@ import shutil
 import torch
 import pandas as pd
 import matplotlib.pyplot as plt
+import json
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning)   # torch warning we dont care about
 
@@ -38,10 +39,12 @@ class train_saver:
                        lr,
                        batch_size,
                        task,
-                       save_name=''):
+                       save_name='',
+                       labels_range={}):
         self.base_dir = base_dir
         self.task = task
         self.save_name = save_name
+        self.labels_range = labels_range
         # if hasattr(model, 'dimensions'):
         #     self.model_dimensions = model.dimensions
         # else:
@@ -49,6 +52,9 @@ class train_saver:
         self.lr = lr
         self.batch_size = batch_size
         self.get_save_dir()
+        # save label range to know how to un normalise when testing
+        with open(os.path.join(self.models_dir, 'output_normilisation.json'), 'w') as f:
+            json.dump(labels_range, f)
 
     def get_save_dir(self):
         dir = os.path.join(self.base_dir, self.task)

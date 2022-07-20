@@ -70,7 +70,8 @@ class trainer():
                                  self.lr,
                                  self.batch_size,
                                  self.dataset_train.task,
-                                 self.dataset_train.data_type)
+                                 self.dataset_train.data_type,
+                                 self.dataset_train.labels_range)
 
     def setup(self):
         # optimser
