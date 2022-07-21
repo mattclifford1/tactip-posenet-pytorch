@@ -69,9 +69,9 @@ class trainer():
                                  self.model,
                                  self.lr,
                                  self.batch_size,
-                                 self.dataset_train.task,
-                                 self.dataset_train.data_type,
-                                 self.dataset_train.labels_range)
+                                 self.dataset_train.data_task,  # eg. (edge_2d, tap)
+                                 self.dataset_train.data_type,  # eg. sim_ or real_ or nathan_
+                                 self.dataset_train.labels_range) # normalisation of outputs to [-1,1]
 
     def setup(self):
         # optimser

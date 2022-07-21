@@ -66,13 +66,12 @@ class get_data:
         self.image_dir = os.path.join(self.base_dir, data_name, 'frames_bw')
         self.x_name = 'image_name'
         self.data_type = 'nathan_'
-        self.task = self.data_task[0]
-        if self.task == 'surface_2d' or self.task == 'edge_2d':
+        if self.data_task[0] == 'surface_2d' or self.data_task[0] == 'edge_2d':
             self.y_names = ['pose_2', 'pose_6']
-        elif self.task == 'surface_3d':
+        elif self.data_task[0] == 'surface_3d':
             self.y_names = ['pose_3', 'pose_4', 'pose_5']
         else:
-            raise Exception('Incorrect task: '+str(self.task))
+            raise Exception('Incorrect task: '+str(self.data_task[0]))
         if not os.path.isfile(self.csv):
             dir = 'csv_val' if self.val else 'csv_train'   # from sim2real data
             path = os.path.join(self.base_dir, self.sim2real_path, self.data_task[2], self.data_task[0], self.data_task[1])

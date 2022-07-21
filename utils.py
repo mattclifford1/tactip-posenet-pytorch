@@ -57,7 +57,7 @@ class train_saver:
             json.dump(labels_range, f)
 
     def get_save_dir(self):
-        dir = os.path.join(self.base_dir, self.task)
+        dir = os.path.join(self.base_dir, self.task[0], self.task[1])
         name = self.save_name
         name += 'LR:'+str(self.lr)
         name += '_BS:'+str(self.batch_size)
