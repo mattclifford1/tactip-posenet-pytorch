@@ -8,7 +8,8 @@ import sys
 base_dir = split(split(realpath(__file__))[0])[0]
 sys.path.append(base_dir)
 
-import trainer, dataloader
+from data import dataloader
+import trainer
 import networks.tacnet as t_net
 import networks.model_128 as m_128
 

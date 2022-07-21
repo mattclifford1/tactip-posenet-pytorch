@@ -4,8 +4,12 @@ CODE validation
   - keras data from above url:
     - edge_2d:    [2, 6]  [0.15, 1.45]     331: [0.15, 1.66]
     - surface_2d: [2, 6]  [0.08, 0.72]     331: [0.11, 0.73]
-    
-- write pytests!!!!
+
+
+plotting
+- combine multiple runs
+
+
 
 dataloader
 (maybe change to just using the sim2real data?)
@@ -13,13 +17,11 @@ dataloader
 
 
 network
-- change output size depending on 2d/3d
 - flexible to let user define different conv channel sizes
 
 
 
 validaiton
-- better saving structure
 - script to eval
   - give model dir and dataloader - return MAE
 

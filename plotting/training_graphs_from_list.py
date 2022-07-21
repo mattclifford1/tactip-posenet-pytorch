@@ -16,17 +16,17 @@ if __name__ == '__main__':
     train_routine = '_LR:0.0001_BS:16'
     curves_to_plot = {
         # 'edge tap real': os.path.join('edge_2d', 'tap', 'real'+train_routine, 'run_0', 'training_stats.csv'),
-        # 'edge shear real': os.path.join('edge_2d', 'shear', 'real'+train_routine, 'run_0', 'training_stats.csv'),
         # 'edge tap sim': os.path.join('edge_2d', 'tap', 'sim'+train_routine, 'run_0', 'training_stats.csv'),
+        # 'edge shear real': os.path.join('edge_2d', 'shear', 'real'+train_routine, 'run_0', 'training_stats.csv'),
         # 'edge shear sim': os.path.join('edge_2d', 'shear', 'sim'+train_routine, 'run_0', 'training_stats.csv'),
 
-        # 'surface tap real': os.path.join('surface_3d', 'tap', 'real'+train_routine, 'run_0', 'training_stats.csv'),
-        'surface shear real': os.path.join('surface_3d', 'shear', 'real'+train_routine, 'run_0', 'training_stats.csv'),
-        # 'surface tap sim': os.path.join('surface_3d', 'tap', 'sim'+train_routine, 'run_0', 'training_stats.csv'),
-        'surface shear sim': os.path.join('surface_3d', 'shear', 'sim'+train_routine, 'run_0', 'training_stats.csv'),
+        'surface tap real': os.path.join('surface_3d', 'tap', 'real'+train_routine, 'run_1', 'training_stats.csv'),
+        'surface tap sim': os.path.join('surface_3d', 'tap', 'sim'+train_routine, 'run_1', 'training_stats.csv'),
+        'surface shear real': os.path.join('surface_3d', 'shear', 'real'+train_routine, 'run_1', 'training_stats.csv'),
+        'surface shear sim': os.path.join('surface_3d', 'shear', 'sim'+train_routine, 'run_1', 'training_stats.csv'),
 
-
-
+        # 'edge shear nathan': os.path.join('edge_2d', 'shear', 'nathan'+train_routine, 'run_0', 'training_stats.csv'),
+        # 'surface shear nathan': os.path.join('surface_2d', 'shear', 'nathan'+train_routine, 'run_0', 'training_stats.csv'),
     }
 
     cols = ['mean training loss', 'val MAE']

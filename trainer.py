@@ -18,7 +18,7 @@ from torch.optim.lr_scheduler import ExponentialLR, LambdaLR
 
 from tqdm import tqdm
 import multiprocessing
-import dataloader
+from data import dataloader
 import utils
 
 import matplotlib.pyplot as plt

@@ -8,7 +8,7 @@ import sys
 base_dir = split(split(realpath(__file__))[0])[0]
 sys.path.append(base_dir)
 
-import dataloader
+from data import dataloader
 
 
 
