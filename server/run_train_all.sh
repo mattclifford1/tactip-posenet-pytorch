@@ -6,21 +6,26 @@ ram="32G"        # change these
 data_dir="/user/work/mc15445/summer-project"
 epochs=100
 
-job_name="pose"
 time="0-2:00"
 
 task="edge_2d shear real"
-sbatch -t $time -J $job_name -o $dir'.out' -e $dir'.err' --mem=$ram server/submit_job.sh python trainer.py --epochs $epochs --dir $data_dir --task $task --ram
+name="edge_real"
+sbatch -t $time -J $dir$name -o $dir$name'.out' -e $dir$name'.err' --mem=$ram server/submit_job.sh python trainer.py --epochs $epochs --dir $data_dir --task $task --ram
 task="edge_2d shear sim"
-sbatch -t $time -J $job_name -o $dir'.out' -e $dir'.err' --mem=$ram server/submit_job.sh python trainer.py --epochs $epochs --dir $data_dir --task $task --ram
+name="edge_sim"
+sbatch -t $time -J $dir$name -o $dir$name'.out' -e $dir$name'.err' --mem=$ram server/submit_job.sh python trainer.py --epochs $epochs --dir $data_dir --task $task --ram
 task="surface_3d shear real"
-sbatch -t $time -J $job_name -o $dir'.out' -e $dir'.err' --mem=$ram server/submit_job.sh python trainer.py --epochs $epochs --dir $data_dir --task $task --ram
+name="surface_real"
+sbatch -t $time -J $dir$name -o $dir$name'.out' -e $dir$name'.err' --mem=$ram server/submit_job.sh python trainer.py --epochs $epochs --dir $data_dir --task $task --ram
 task="surface_3d shear sim"
-sbatch -t $time -J $job_name -o $dir'.out' -e $dir'.err' --mem=$ram server/submit_job.sh python trainer.py --epochs $epochs --dir $data_dir --task $task --ram
+name="surface_sim"
+sbatch -t $time -J $dir$name -o $dir$name'.out' -e $dir$name'.err' --mem=$ram server/submit_job.sh python trainer.py --epochs $epochs --dir $data_dir --task $task --ram
 
 # on dev-data
 data_dir="/user/work/mc15445/summer-project/data/Nathan/tactip-127"
 task="edge_2d shear real"
-sbatch -t $time -J $job_name -o $dir'.out' -e $dir'.err' --mem=$ram server/submit_job.sh python trainer.py --epochs $epochs --dir $data_dir --task $task --ram
+name="edge_nathan"
+sbatch -t $time -J $dir$name -o $dir$name'.out' -e $dir$name'.err' --mem=$ram server/submit_job.sh python trainer.py --epochs $epochs --dir $data_dir --task $task --ram
 task="surface_2d shear real"
-sbatch -t $time -J $job_name -o $dir'.out' -e $dir'.err' --mem=$ram server/submit_job.sh python trainer.py --epochs $epochs --dir $data_dir --task $task --ram
+name="surface_nathan"
+sbatch -t $time -J $dir$name -o $dir$name'.out' -e $dir$name'.err' --mem=$ram server/submit_job.sh python trainer.py --epochs $epochs --dir $data_dir --task $task --ram

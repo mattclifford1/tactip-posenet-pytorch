@@ -67,10 +67,8 @@ class get_data:
         self.x_name = 'image_name'
         self.data_type = 'nathan_'
         self.task = self.data_task[0]
-        if self.task == 'surface_2d':
+        if self.task == 'surface_2d' or self.task == 'edge_2d':
             self.y_names = ['pose_2', 'pose_6']
-        elif self.task == 'edge_2d':
-            self.y_names = ['pose_1', 'pose_6']
         elif self.task == 'surface_3d':
             self.y_names = ['pose_3', 'pose_4', 'pose_5']
         else:
