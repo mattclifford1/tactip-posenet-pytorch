@@ -6,7 +6,7 @@ ram="32G"        # change these
 data_dir="/user/work/mc15445/summer-project"
 epochs=100
 
-time="0-2:00"
+time="0-1:20"
 
 # sim2real data
 task="edge_2d shear real"
