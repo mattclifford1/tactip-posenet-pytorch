@@ -2,7 +2,7 @@
 Author: Matt Clifford
 Email: matt.clifford@bristol.ac.uk
 
-training of nueral network
+training of tactip pose estimation nueral network
 '''
 import multiprocessing
 import numpy as np

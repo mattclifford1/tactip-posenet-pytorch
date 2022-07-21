@@ -92,8 +92,9 @@ class get_data:
             # get min and max to normalise data
             if self.val == False:   # calc how to normalise labels is using training set
                 self.labels_range[label] = [round(self.df[label].min()), round(self.df[label].max())]
-            # interp to put into range (-1, 1)
-            self.labels[label] = np.interp(self.df[label].tolist(), self.labels_range[label], (-1,1))
+            if self.labels_range != {}:  # if not input the range then dont normalise when in val
+                # interp to put into range (-1, 1)
+                self.labels[label] = np.interp(self.df[label].tolist(), self.labels_range[label], (-1,1))
 
     def load_images_to_ram(self):
         print('Loading all images into RAM')

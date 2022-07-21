@@ -22,8 +22,11 @@ network
 
 
 validaiton
+- write tests
 - script to eval
   - give model dir and dataloader - return MAE
+
+  - copy over to sim2real and use to evaluate real2sim output
 
 
 over-arching
