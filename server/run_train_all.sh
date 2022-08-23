@@ -16,13 +16,14 @@ sbatch -t $time -J $name -o $dir$name'.out' -e $dir$name'.err' --mem=$ram server
 task="edge_2d shear sim"
 name="edge_sim"
 sbatch -t $time -J $name -o $dir$name'.out' -e $dir$name'.err' --mem=$ram server/submit_job.sh python trainer.py --epochs $epochs --dir $data_dir --task $task --ram
-# surface
-task="surface_3d shear real"
-name="surface_real"
-sbatch -t $time -J $name -o $dir$name'.out' -e $dir$name'.err' --mem=$ram server/submit_job.sh python trainer.py --epochs $epochs --dir $data_dir --task $task --ram
-task="surface_3d shear sim"
-name="surface_sim"
-sbatch -t $time -J $name -o $dir$name'.out' -e $dir$name'.err' --mem=$ram server/submit_job.sh python trainer.py --epochs $epochs --dir $data_dir --task $task --ram
+#
+# # surface
+# task="surface_3d shear real"
+# name="surface_real"
+# sbatch -t $time -J $name -o $dir$name'.out' -e $dir$name'.err' --mem=$ram server/submit_job.sh python trainer.py --epochs $epochs --dir $data_dir --task $task --ram
+# task="surface_3d shear sim"
+# name="surface_sim"
+# sbatch -t $time -J $name -o $dir$name'.out' -e $dir$name'.err' --mem=$ram server/submit_job.sh python trainer.py --epochs $epochs --dir $data_dir --task $task --ram
 
 
 
@@ -34,13 +35,14 @@ sbatch -t $time -J $name -o $dir$name'.out' -e $dir$name'.err' --mem=$ram server
 task="edge_2d tap sim"
 name="edge_sim"
 sbatch -t $time -J $name -o $dir$name'.out' -e $dir$name'.err' --mem=$ram server/submit_job.sh python trainer.py --epochs $epochs --dir $data_dir --task $task --ram
-# shear
-task="surface_3d tap real"
-name="surface_real"
-sbatch -t $time -J $name -o $dir$name'.out' -e $dir$name'.err' --mem=$ram server/submit_job.sh python trainer.py --epochs $epochs --dir $data_dir --task $task --ram
-task="surface_3d tap sim"
-name="surface_sim"
-sbatch -t $time -J $name -o $dir$name'.out' -e $dir$name'.err' --mem=$ram server/submit_job.sh python trainer.py --epochs $epochs --dir $data_dir --task $task --ram
+
+# # shear
+# task="surface_3d tap real"
+# name="surface_real"
+# sbatch -t $time -J $name -o $dir$name'.out' -e $dir$name'.err' --mem=$ram server/submit_job.sh python trainer.py --epochs $epochs --dir $data_dir --task $task --ram
+# task="surface_3d tap sim"
+# name="surface_sim"
+# sbatch -t $time -J $name -o $dir$name'.out' -e $dir$name'.err' --mem=$ram server/submit_job.sh python trainer.py --epochs $epochs --dir $data_dir --task $task --ram
 
 
 
