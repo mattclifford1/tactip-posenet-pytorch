@@ -1,10 +1,12 @@
 # Pytorch version of tactip pose-2d regression training and testing
-Tested with python 3.9 and pytorch 1.11
+Tested with python 3.8 / 3.9 and pytorch 1.11
 
 ## Currently under development - let me know if you find any bugs!
 TODO:
-  - training step
-  - validation
-  - training graphs
-  - validation MSE graphs
-  - train some models 
+  - documentation
+  - hyperopt
+  - digitac compatibility
+  - figure out why with RELU it does not train
+  - digitac data loader/saving scheme
+  - make data loading scheme more generic
+    - document expected data structure 
