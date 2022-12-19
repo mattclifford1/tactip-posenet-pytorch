@@ -4,3 +4,4 @@ scikit-image
 matplotlib
 pandas
 tqdm
+opencv-python
